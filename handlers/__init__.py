@@ -1,10 +1,11 @@
 from aiogram import Router
 
-import handlers.start
+from handlers import start, registration
 
 
 router = Router()
 
 router.include_routers(
-    handlers.start.router,
+    start.router,
+    registration.router,
 )
