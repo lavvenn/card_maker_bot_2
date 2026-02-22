@@ -10,31 +10,49 @@
 
 ## 1 clone repo
 
-``git clone https://github.com/lavvenn/card_maker_bot_2.git``
+```bash
+git clone https://github.com/lavvenn/card_maker_bot_2.git
+```
 
 change directory to project
-``cd card_maker_bot_2``
+```bash
+cd card_maker_bot_2
+```
 
 ## 2 create and activate venv
 
 windows
-``python -m venv venv``
+```bash
+python -m venv venv
+```
 
-``.\venv\scripts\activate``
+```bash
+.\venv\scripts\activate
+```
 
 linux/mac
-``python3 -m venv venv``
+```bash
+python3 -m venv venv
+```
 
-``source venv/bin/activate``
+```bash
+source venv/bin/activate
+```
 
 ## 3 install requirements
 
-``pip install -r req/dev.txt``
+```bash
+pip install -r req/dev.txt
+```
 
 ## 4 environment configuration
 
-``cp template.env .env``
+```bash
+cp template.env .env
+```
 
 ## 5 run bot
 
-``python main.py``
+```bash
+python main.py
+```
