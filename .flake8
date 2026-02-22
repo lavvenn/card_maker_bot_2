@@ -3,8 +3,9 @@ max-line-length = 79
 
 
 import-order-style = google
-application-import-names = handlers
+application-import-names = handlers, keyboards
 inline-quotes = "
 
 exclude =
     ./venv/
+    */__init__.py
