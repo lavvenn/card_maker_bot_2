@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 79
+
+
+import-order-style = google
+application-import-names = handlers
+inline-quotes = "
+
+exclude =
+    ./venv/
