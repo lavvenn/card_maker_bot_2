@@ -1,8 +1,10 @@
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message
 
 from keyboards.builders import goroup_kb_builder
+from keyboards.inline import confirmation_kb
+from keyboards.reply import main_kb
 from states import Registration
 
 router = Router()
@@ -27,4 +29,55 @@ async def lastname_registration(message: Message, state: FSMContext):
 @router.message(Registration.firstname)
 async def firstname_registration(message: Message, state: FSMContext):
     await state.update_data(firstname=message.text)
+    await state.set_state(Registration.group)
     await message.answer("Выберете свою группу", reply_markup=goroup_kb_builder())
+
+
+@router.callback_query(Registration.group)
+async def group_registration(query: CallbackQuery, state: FSMContext):
+    await state.update_data(group=query.data)
+    await state.set_state(Registration.photo)
+
+    await query.answer("")
+    await query.message.answer("отправьте фото")
+    await query.message.answer(
+        "❗️перед отправкой обрежте фото так чтобы ваше лицо находилось в центре❗️",
+    )
+
+
+@router.message(Registration.photo)
+async def photo_registration(message: Message, state: FSMContext):
+    if message.photo:
+
+        await state.update_data(photo=message.photo[-1].file_id)
+
+        data = await state.get_data()
+
+        await state.set_state(Registration.confirming)
+        await message.answer_photo(
+            photo=data["photo"],
+            caption=f"""
+❗️внимательно проверьте все данные перед подтверждением❗️
+Фамилия: {data["lastname"]}
+Имя: {data["firstname"]}
+
+    Группа: {data["group"]}
+    """,
+            reply_markup=confirmation_kb,
+        )
+
+    else:
+        await message.answer("Вы отправили не фото")
+
+
+@router.callback_query(Registration.confirming)
+async def confirmation_registration(query: CallbackQuery, state: FSMContext):
+
+    await query.answer("")
+
+    if query.data == "aprove":
+        await query.message.answer("WIP")
+
+    else:
+        await query.message.answer("Регистрация отменена", reply_markup=main_kb)
+        await state.clear()
