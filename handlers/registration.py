@@ -1,7 +1,10 @@
-from aiogram import F, Router
+from pathlib import Path
+
+from aiogram import Bot, F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from image_editor.pass_generator import PassGenirator
 from keyboards.builders import goroup_kb_builder
 from keyboards.inline import confirmation_kb
 from keyboards.reply import main_kb
@@ -71,11 +74,32 @@ async def photo_registration(message: Message, state: FSMContext):
 
 
 @router.callback_query(Registration.confirming)
-async def confirmation_registration(query: CallbackQuery, state: FSMContext):
+async def confirmation_registration(query: CallbackQuery, state: FSMContext, bot: Bot):
 
     await query.answer("")
 
+    genirator = PassGenirator()
+
     if query.data == "aprove":
+
+        data = await state.get_data()
+
+        photo_file = await bot.get_file(data["photo"])
+        photo_path = "tmp/photo.jpg"
+
+        await bot.download_file(photo_file.file_path, photo_path)
+
+        output_path = Path(
+            f"result/{data["group"]}/{data['lastname']}_{data["firstname"]}.png",
+        )
+
+        genirator.genirate(
+            data["firstname"],
+            data["lastname"],
+            photo_path,
+            output_path,
+        )
+
         await query.message.answer("WIP")
 
     else:
