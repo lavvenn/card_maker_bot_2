@@ -3,7 +3,7 @@ max-line-length = 88
 
 
 import-order-style = google
-application-import-names = handlers, keyboards, states, image_editor
+application-import-names = handlers, keyboards, states, image_editor, db
 inline-quotes = "
 
 exclude =
