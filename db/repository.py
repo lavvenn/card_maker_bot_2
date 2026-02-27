@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .models import User
+from .models import Group, User
 
 
 class UserRepository:
@@ -43,3 +43,24 @@ class UserRepository:
         await self.session.commit()
         await self.session.refresh(user)
         return user
+
+
+class GroupRepository:
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def create(self, name: str, slug):
+        group = Group(
+            name=name,
+            slug=slug,
+        )
+        await self.session.add(group)
+
+    async def get_all(self) -> tuple[Group]:
+
+        stm = select(Group).all()
+
+        result = await self.session.execute(stm)
+
+        return result.scalar_one_or_none()
