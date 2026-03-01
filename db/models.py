@@ -1,4 +1,4 @@
-from typing import List
+from enum import Enum
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -6,34 +6,29 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .session import Base
 
 
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    STUDENT = "student"
+    CURATOR = "curator"
+
+
 class User(Base):
 
     __tablename__ = "users"
 
+    telegram_id: Mapped[int] = mapped_column(primary_key=True)
+    role: Mapped[UserRole] = mapped_column(String(20), nullable=False)
+    pass_: Mapped["Pass"] = relationship(back_populates="user")
+
+
+class Pass(Base):
+
+    __tablename__ = "passes"
+
     id: Mapped[int] = mapped_column(primary_key=True)
-    telegram_id: Mapped[int]
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id"))
+    user: Mapped["User"] = relationship(back_populates="pass_")
     lastname: Mapped[str] = mapped_column(String(100))
     firstname: Mapped[str] = mapped_column(String(100))
-    group: Mapped[int] = mapped_column(ForeignKey("groups.id"))
+    group: Mapped[str] = mapped_column(String(100))
     photo_file_id: Mapped[str] = mapped_column(String(255))
-
-
-class Curator(Base):
-
-    __tablename__ = "curators"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    lastname: Mapped[str] = mapped_column(String(100))
-    firstname: Mapped[str] = mapped_column(String(100))
-    phone_number: Mapped[str] = mapped_column(String(30))
-    group: Mapped[List["Group"]] = relationship()
-
-
-class Group(Base):
-
-    __tablename__ = "groups"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    curator: Mapped[int] = mapped_column(ForeignKey("curators.id"), nullable=True)
-    name: Mapped[str] = mapped_column(String(100))
-    slug: Mapped[str] = mapped_column(String(100))

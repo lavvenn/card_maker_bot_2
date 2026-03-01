@@ -4,7 +4,7 @@ from aiogram import Bot, F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from db.repository import UserRepository
+from db.repository import PassRepository
 from db.session import SessionLocal
 from image_editor.pass_generator import PassGenirator
 from keyboards.builders import goroup_kb_builder
@@ -87,12 +87,16 @@ async def confirmation_registration(query: CallbackQuery, state: FSMContext, bot
         data = await state.get_data()
 
         photo_file = await bot.get_file(data["photo"])
-        photo_path = "tmp/photo.jpg"
+        photo_path = f"tmp/{data['lastname']}_{data["firstname"]}.png"
 
         await bot.download_file(photo_file.file_path, photo_path)
 
+        output_path = Path(
+            f"result/{data["group"]}/{data['lastname']}_{data["firstname"]}.png",
+        )
+
         async with SessionLocal() as session:
-            repo = UserRepository(session)
+            repo = PassRepository(session)
 
             existing_user = await repo.get_by_telegram_id(query.message.from_user.id)
 
@@ -112,10 +116,6 @@ async def confirmation_registration(query: CallbackQuery, state: FSMContext, bot
                     group=data["group"],
                     photo_file_id=data["photo"],
                 )
-
-        output_path = Path(
-            f"result/{data["group"]}/{data['lastname']}_{data["firstname"]}.png",
-        )
 
         genirator.genirate(
             data["firstname"],
