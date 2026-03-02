@@ -98,11 +98,11 @@ async def confirmation_registration(query: CallbackQuery, state: FSMContext, bot
         async with SessionLocal() as session:
             repo = PassRepository(session)
 
-            existing_user = await repo.get_by_telegram_id(query.message.from_user.id)
+            existing_pass = await repo.get_by_telegram_id(query.from_user.id)
 
-            if existing_user:
+            if existing_pass:
                 await repo.update(
-                    existing_user,
+                    existing_pass,
                     lastname=data["lastname"],
                     firstname=data["firstname"],
                     group=data["group"],

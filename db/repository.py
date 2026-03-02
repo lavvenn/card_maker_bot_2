@@ -29,6 +29,14 @@ class UserRepository:
 
         return user
 
+    async def update(self, user: User, **kwargs):
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+
+        await self.session.commit()
+        await self.session.refresh(user)
+        return user
+
 
 class PassRepository:
 
@@ -59,3 +67,11 @@ class PassRepository:
         self.session.add(pass_)
         await self.session.commit()
         await self.session.refresh(pass_)
+
+    async def update(self, pass_: Pass, **kwargs):
+        for key, value in kwargs.items():
+            setattr(pass_, key, value)
+
+        await self.session.commit()
+        await self.session.refresh(pass_)
+        return pass_
