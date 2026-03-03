@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .models import Pass, User, UserRole
+from .models import Group, Pass, User, UserRole
 
 
 class UserRepository:
@@ -53,7 +53,7 @@ class PassRepository:
         telegram_id: int,
         lastname: str,
         firstname: str,
-        group: str,
+        group: Group,
         photo_file_id: str,
     ):
         pass_ = Pass(
@@ -75,3 +75,17 @@ class PassRepository:
         await self.session.commit()
         await self.session.refresh(pass_)
         return pass_
+
+
+class GroupRepository:
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def create(self, currator_id: int, name: str, slug: str):
+
+        group = Group(currator_id=currator_id, name=name, slug=slug)
+
+        self.session.add(group)
+        await self.session.commit()
+        await self.session.refresh(group)
