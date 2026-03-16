@@ -15,9 +15,10 @@ async def command_start(message: Message):
         repo = UserRepository(session)
 
         existing_user = await repo.get_by_telegram_id(message.from_user.id)
+        user_role = await repo.get_user_role(message.from_user.id)
 
         if existing_user:
-            await message.answer(f"{existing_user.role}", reply_markup=reply.main_kb)
+            await message.answer(f"{user_role}", reply_markup=reply.main_kb)
         else:
             await repo.create(
                 telegram_id=message.from_user.id,

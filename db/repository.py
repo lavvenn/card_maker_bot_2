@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Pass, User, UserRole
@@ -12,6 +12,13 @@ class UserRepository:
     async def get_by_telegram_id(self, telegram_id: int) -> User | None:
         stmt = select(User).where(User.telegram_id == telegram_id)
         result = await self.session.execute(stmt)
+
+        return result.scalar_one_or_none()
+
+    async def get_user_role(self, telegram_id: int):
+        stmt = select(User.role).where(User.telegram_id == telegram_id)
+        result = await self.session.execute(stmt)
+
         return result.scalar_one_or_none()
 
     async def create(
@@ -75,3 +82,9 @@ class PassRepository:
         await self.session.commit()
         await self.session.refresh(pass_)
         return pass_
+
+    async def get_last(self, limit: int = 5):
+        stmt = select(Pass).order_by(desc(Pass.created_at)).limit(limit)
+
+        result = await self.session.execute(stmt)
+        return result.scalars().all()
