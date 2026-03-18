@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -82,10 +84,29 @@ class GroupRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, currator_id: int, name: str, slug: str):
+    async def create(
+        self,
+        admission_year: datetime,
+        currator_id: int,
+        name: str,
+        slug: str,
+    ):
 
-        group = Group(currator_id=currator_id, name=name, slug=slug)
+        group = Group(
+            admission_year=admission_year,
+            currator_id=currator_id,
+            name=name,
+            slug=slug,
+        )
 
         self.session.add(group)
         await self.session.commit()
         await self.session.refresh(group)
+
+    async def get_slug_name_dict(self):
+
+        stmt = select(Group.name, Group.slug).all()
+
+        result = await self.session.execute(stmt)
+
+        return result.scalar()

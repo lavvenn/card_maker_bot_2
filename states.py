@@ -11,3 +11,12 @@ class Registration(StatesGroup):
     photo = State()
 
     confirming = State()
+
+
+class GroupCreation(StatesGroup):
+
+    name = State()
+    slug = State()
+    admission_year = State()
+
+    confirming = State()
