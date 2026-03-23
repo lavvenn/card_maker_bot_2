@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
@@ -29,7 +31,7 @@ async def group_slug(message: Message, state: FSMContext):
     await state.update_data(slug=message.text)
     await message.answer(
         "выберете год поступления",
-        reply_markup=admin_builders.admission_year_kb(),
+        reply_markup=admin_builders.admission_year_kb(datetime.now().year),
     )
 
 

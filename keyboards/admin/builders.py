@@ -7,6 +7,6 @@ def admission_year_kb(current_year: int):
     builder = InlineKeyboardBuilder()
 
     for year in range(current_year, current_year - 5, -1):
-        builder.row(InlineKeyboardButton(text=year, callback_data=year))
+        builder.row(InlineKeyboardButton(text=str(year), callback_data=str(year)))
 
     return builder.as_markup()
