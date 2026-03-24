@@ -1,6 +1,6 @@
 from aiogram import Router
 
-from handlers import start, registration, test
+from handlers import start, registration, admin
 
 
 router = Router()
@@ -8,5 +8,5 @@ router = Router()
 router.include_routers(
     start.router,
     registration.router,
-    test.router,
+    admin.router,
 )

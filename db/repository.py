@@ -84,17 +84,20 @@ class GroupRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
+    async def get_by_slug(self, slug):
+        stmt = select(Group).where(Group.slug == slug)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none
+
     async def create(
         self,
         admission_year: datetime,
-        currator_id: int,
         name: str,
         slug: str,
     ):
 
         group = Group(
             admission_year=admission_year,
-            currator_id=currator_id,
             name=name,
             slug=slug,
         )

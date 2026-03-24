@@ -70,10 +70,13 @@ class Group(Base):
     __tablename__ = "groups"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    curator_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id"))
+    curator_id: Mapped[int] = mapped_column(
+        ForeignKey("users.telegram_id"),
+        nullable=True,
+    )
     passes: Mapped[List["Pass"]] = relationship()
     name: Mapped[str] = mapped_column(String(50))
-    slug: Mapped[str] = mapped_column(String(50))
+    slug: Mapped[str] = mapped_column(String(50), unique=True)
     admission_year: Mapped[DateTime] = mapped_column(DateTime)
     created_at: Mapped[DateTime] = mapped_column(
         DateTime,
